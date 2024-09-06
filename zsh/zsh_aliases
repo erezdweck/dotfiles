@@ -1,0 +1,4 @@
+alias vim="nvim"
+alias ls="eza"
+alias ll="ls -l"
+alias reload="source $HOME/.zshrc"

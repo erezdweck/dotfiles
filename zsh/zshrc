@@ -1,0 +1,64 @@
+export PATH=$HOME/bin:/usr/local/bin:/home/td/.local/bin:/snap/bin:$PATH
+export PATH=$PATH:/opt/nvim:/usr/local/go/bin
+source ~/.zsh_aliases
+
+# Arrows
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
+
+# history Arrows
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+[[ -n "${key[Up]}"   ]] && bindkey -- "${key[Up]}"   up-line-or-beginning-search
+[[ -n "${key[Down]}" ]] && bindkey -- "${key[Down]}" down-line-or-beginning-search
+
+# history config:
+HISTSIZE=60000
+SAVEHIST=60000
+HISTFILE=~/.zsh_history
+
+
+# Plugins stuff. Load only if not loaded before on shell.
+if [ -z $ZSH_PLUGINS_LOADED ]; then
+export PLUGINS_DIR=$HOME/.zsh_plugins
+
+# FZF
+export fzf_base=$(which fzf)
+source $PLUGINS_DIR/fzf/fzf.plugin.zsh
+source $PLUGINS_DIR/fzf-tab/fzf-tab.plugin.zsh
+
+source $PLUGINS_DIR/zsh-bat/zsh-bat.plugin.zsh
+source $PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
+source $PLUGINS_DIR/zsh-completions/zsh-completions.plugin.zsh
+source $PLUGINS_DIR/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
+source $PLUGINS_DIR/zsh-histdb/sqlite-history.zsh
+source $PLUGINS_DIR/zsh-z/zsh-z.plugin.zsh
+autoload -Uz add-zsh-hook
+ZSH_PLUGINS_LOADED=1
+fi
+
+# custom fzf
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+export FZF_DEFAULT_OPTS='--preview "batcat -n --color=always {}"'
+_fzf_comprun() {
+  local command=$1
+  shift
+
+  case "$command" in
+    cd|ls|z)        fzf --preview 'eza --tree {}'   "$@" ;;
+    export|unset) fzf --preview "eval 'echo \$'{}"         "$@" ;;
+    *)            fzf --preview 'batcat -n --color=always {}' "$@" ;;
+  esac
+}
+
+fpath+=$HOME/.zfunc
+autoload -Uz compinit && compinit
+
+# Atuin for ctrl-r command search
+. "$HOME/.atuin/bin/env"
+eval "$(atuin init zsh --disable-up-arrow)"
+
+# starship
+eval "$(starship init zsh)"
