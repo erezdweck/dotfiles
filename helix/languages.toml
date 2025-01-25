@@ -1,0 +1,49 @@
+# in <config_dir>/helix/languages.toml
+[[language]]
+name = "python"
+language-servers = ["ruff", "pylsp"]
+auto-format = true
+
+[language-server.ruff]
+command = "ruff"
+args = ["server"]
+
+[language-server.ruff.config.settings]
+line-length = 110
+
+[language-server.ruff.config.settings.lint]
+select = [
+  "E",
+  "F",
+  "W",
+  "C90",
+  "I",
+  "N",
+  "UP",
+  "ANN",
+  "S",
+  "B",
+  "A",
+  "COM",
+  "C4",
+  "T10",
+  "FA",
+  "T20",
+  "PYI",
+  "RET",
+  "SLF",
+  "SIM",
+  "TCH",
+  "ARG",
+  "PTH",
+  "PL",
+  "PERF",
+  "RUF",
+]
+preview = true
+ignore = ["ANN204", "ANN201", "ANN202", "RUF006", "S101", "COM812"]
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[language-server.ruff.config.settings.format]
+preview = true
+quete-style = "double"
